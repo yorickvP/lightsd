@@ -5,5 +5,5 @@
   "dependencies": {
     "airport": "~1.1.0",
     "nodejs-microdb": "~0.0.2"
-  },
+  }
 }
