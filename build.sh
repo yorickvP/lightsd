@@ -1,0 +1,1 @@
+lsc -oc lib/ src/

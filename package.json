@@ -1,0 +1,9 @@
+{
+  "name": "lightsd",
+  "version": "0.0.0",
+  "main": "lightsd.js",
+  "dependencies": {
+    "airport": "~1.1.0",
+    "nodejs-microdb": "~0.0.2"
+  },
+}
