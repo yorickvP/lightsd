@@ -1,9 +1,17 @@
 {
   "name": "lightsd",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "main": "lightsd.js",
   "dependencies": {
     "airport": "~1.1.0",
-    "nodejs-microdb": "~0.0.2"
+    "nodejs-microdb": "~0.0.2",
+    "suncalc": "~1.2.2"
+  },
+  "bin": {
+    "lights": "./lights-cli.js"
+  },
+  "scripts": {
+  	"build": "lsc -oc lib/ src",
+  	"watch": "lsc -ocw lib/ src"
   }
 }
