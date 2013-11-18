@@ -1,25 +1,45 @@
 require! [airport, \./lock]
 require! MicroDB: \nodejs-microdb
-air = airport \frumar.yori.cc 9090
+settings =
+	host: \frumar.yori.cc
+	port: 9090
+	version: \0.0.2
 
+# spit :: IO ()
+spit = -> process.stdout.write it + \\n
+
+# cbify :: (a -> b) -> (a -> (b -> ()) -> ())
+cbify = (f) ->
+	->
+		if arguments.length == f.length + 1
+			[...args, cb] = arguments
+			ret = f ...
+			cb? ret
+		else
+			f ...
+
+air = airport settings.host, settings.port
 air !(remote, conn) ->
-	@turn = turn
-	@list-lights = list-lights
-	@del-light = del-light
-	@del-light-by-name = del-light-by-name
-	@add-light = add-light
-	@turn-light = turn-light
-	@list-schedule = list-schedule
-	@del-schedule = del-schedule
-	@add-schedule = add-schedule
-	@add-schedule-light = add-schedule-light
-.listen \lightsd@0.0.1
+	@turn =        cbify turn
+	@lights =
+		list:      cbify list-lights
+		del:       cbify del-light
+		del-name:  cbify del-light-by-name
+		add:       cbify add-light
+		turn:      cbify turn-light
+	@schedule =
+		list:      cbify list-schedule
+		del:       cbify del-schedule
+		add:       cbify add-schedule
+		add-light: cbify add-schedule-light
+.listen \lightsd@ + settings.version
 
 {spawn} = require \child_process
 
 
 turn-lock = new lock
-turn = (group, num, state) ->
+# turn :: Group -> Num -> Boolean -> IO ()
+turn = (group, num, state) !->
 	if typeof state is \boolean
 		state = if state then \on else \off
 	turn-lock.get ->
@@ -32,30 +52,39 @@ turn = (group, num, state) ->
 lights-db = new Micro-DB do
 	file: \lights.db
 
-list-lights = (cb) -> cb lights-db.data
+# list-lights :: Object Id, Object LightEntry
+list-lights = -> lights-db.data
+# del-light :: Id -> DBMod
 del-light = lights-db~del
+
+# del-light-by-name :: Name -> IO ()
 del-light-by-name = (name) ->
 	lights-db.del (lights-db.find \name name)
+# add-light :: String -> Group -> Num -> DBMod
 add-light = (name, group, num) ->
 	lights-db.add {name, group, num}
-turn-light = (name, state, cb) ->
+# turn-light :: String -> Boolean -> IO ()
+turn-light = (name, state) ->
 	id = lights-db.find \name name
-	if !id
-		cb? false
+	if !id then false
 	else
 		{group, num} = lights-db.data[id]
 		turn group, num, state
-		cb? true
+		true
 
 schedule-db = new Micro-DB do
 	file: \schedule.db
-list-schedule = (cb) -> cb schedule-db.data
+# list-schedule :: Object Id, Object ScheduleEntry
+list-schedule = -> schedule-db.data
+# del-schedule :: Id -> DBMod
 del-schedule = ->
 	schedule-db.del ...
 	exec-schedule!
+# add-schedule :: Int -> Group -> Num -> Boolean -> String -> IO DBMod
 add-schedule = (+time, group, num, state, desc = '') ->
 	schedule-db.add {time, group, num, state, desc}
 	exec-schedule!
+# add-schedule-light :: Int -> String -> Boolean -> String -> IO DBMod
 add-schedule-light = (+time, name, state, desc = '') ->
 	schedule-db.add {time, name, state, desc}
 	exec-schedule!
@@ -75,6 +104,7 @@ schedule-next = ->
 			min-id = id
 	[min-id, min-s]
 
+
 schedule-timeout = void
 exec-schedule = ->
 	if schedule-timeout?
@@ -83,17 +113,17 @@ exec-schedule = ->
 
 	[id, s] = schedule-next!
 	if !s?
-		console.log "Nothing scheduled"
+		spit "Nothing scheduled"
 		return
 	now = Date.now!
 
 	if s.time < now
-		console.log "executing something"
+		spit "executing something"
 		process.next-tick -> schedule-run s
 		schedule-db.del id
 		exec-schedule!
 	else
-		console.log "Scheduling into the future"
+		spit "Scheduling into the future"
 		schedule-timeout = set-timeout exec-schedule, (s.time - now + 100)
 
 process.on \SIGINT !->
