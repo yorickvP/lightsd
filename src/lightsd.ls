@@ -78,7 +78,7 @@ schedule-db = new Micro-DB do
 list-schedule = -> schedule-db.data
 # del-schedule :: Id -> DBMod
 del-schedule = ->
-	schedule-db.del ...
+	schedule-db.del it
 	exec-schedule!
 # add-schedule :: Int -> Group -> Num -> Boolean -> String -> IO DBMod
 add-schedule = (+time, group, num, state, desc = '') ->
