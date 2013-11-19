@@ -45,6 +45,11 @@ function remForDate(d, remote) {
 
 lights(function(r, conn) {
 	var d = new Date
+	// inputting a date before 00:40:41 gives times for previous day
+	// so set it to noon
+	d.setHours(12)
+	d.setMinutes(0)
+	d.setSeconds(0)
 	remForDate(d, r)
 	addForDate(d, r)
 	setTimeout(process.exit, 1000)
