@@ -1,13 +1,12 @@
 require! [airport, \./lock]
 require! MicroDB: \nodejs-microdb
-settings =
-	host: \frumar.yori.cc
-	port: 9090
-	version: \0.0.2
+{spawn} = require \child_process
+settings = require \./config
+
+{version} = require "#__dirname/../package.json"
 
 # spit :: IO ()
 spit = -> process.stdout.write (new Date).toISOString() + ": #it\n"
-
 # cbify :: (a -> b) -> (a -> (b -> ()) -> ())
 cbify = (f) ->
 	->
@@ -32,9 +31,7 @@ air !(remote, conn) ->
 		del:       cbify del-schedule
 		add:       cbify add-schedule
 		add-light: cbify add-schedule-light
-.listen \lightsd@ + settings.version
-
-{spawn} = require \child_process
+.listen \lightsd@ + version
 
 
 turn-lock = new lock
@@ -44,7 +41,7 @@ turn = (group, num, state) !->
 		state = if state then \on else \off
 	turn-lock.get ->
 		split "light #state #group #num"
-		proc = spawn \./kaku [group, num, state]
+		proc = spawn settings.controller [group, num, state]
 		proc.stdout.pipe(process.stdout)
 		proc.on \exit turn-lock~free
 
