@@ -41,7 +41,7 @@ turn = (group, num, state) !->
 		state = if state then \on else \off
 	turn-lock.get ->
 		spit "light #state #group #num"
-		proc = spawn settings.controller [group, num, state]
+		proc = spawn settings.controller, [group, num, state]
 		proc.stdout.pipe(process.stdout)
 		proc.on \exit turn-lock~free
 
