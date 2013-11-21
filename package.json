@@ -8,7 +8,8 @@
     "suncalc": "~1.2.2"
   },
   "bin": {
-    "lights": "./lights-cli.js"
+    "lights": "./lights-cli.js",
+    "lightsd": "./lightsd.js"
   },
   "scripts": {
   	"build": "lsc -oc lib/ src",
