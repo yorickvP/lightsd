@@ -35,9 +35,10 @@ function addForDate(d, remote) {
 	console.log("on: ", start)
 	console.log("off: ", end)
 }
-function remForDate(d, remote) {
+function remForDate(d, remote, cb) {
 	var repr  = dateRepr(d)
 	remote.schedule.list(function(sched) {
+		cb()
 		Object.keys(sched).forEach(function(id) {
 			if (sched[id].desc == "sunset " + repr ||
 				sched[id].desc == "night "  + repr)
@@ -50,8 +51,9 @@ lights(function(r, conn) {
 	d.setHours(12)
 	d.setMinutes(0)
 	d.setSeconds(0)
-	remForDate(d, r)
-	addForDate(d, r)
-	setTimeout(process.exit, 1000)
+	remForDate(d, r, function() {
+		addForDate(d, r)
+		setTimeout(process.exit, 700)
+	})
 })
 
