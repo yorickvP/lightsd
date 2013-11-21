@@ -6,7 +6,7 @@ settings =
 	version: \0.0.2
 
 # spit :: IO ()
-spit = -> process.stdout.write it + \\n
+spit = -> process.stdout.write (new Date).toISOString() + ": #it\n"
 
 # cbify :: (a -> b) -> (a -> (b -> ()) -> ())
 cbify = (f) ->
@@ -43,7 +43,7 @@ turn = (group, num, state) !->
 	if typeof state is \boolean
 		state = if state then \on else \off
 	turn-lock.get ->
-		console.log "Turning #state #group #num"
+		split "light #state #group #num"
 		proc = spawn \./kaku [group, num, state]
 		proc.stdout.pipe(process.stdout)
 		proc.on \exit turn-lock~free
@@ -79,14 +79,17 @@ list-schedule = -> schedule-db.data
 # del-schedule :: Id -> DBMod
 del-schedule = ->
 	schedule-db.del it
+	spit "sched  DEL - #it"
 	exec-schedule!
 # add-schedule :: Int -> Group -> Num -> Boolean -> String -> IO DBMod
 add-schedule = (+time, group, num, state, desc = '') ->
 	schedule-db.add {time, group, num, state, desc}
+	spit "sched  ADD - #time #group #num #state #desc"
 	exec-schedule!
 # add-schedule-light :: Int -> String -> Boolean -> String -> IO DBMod
 add-schedule-light = (+time, name, state, desc = '') ->
 	schedule-db.add {time, name, state, desc}
+	spit "sched  ADD - #time #name #state #desc"
 	exec-schedule!
 
 schedule-run = (s) ->
@@ -113,17 +116,17 @@ exec-schedule = ->
 
 	[id, s] = schedule-next!
 	if !s?
-		spit "Nothing scheduled"
+		spit "sched  EMPTY"
 		return
 	now = Date.now!
 
 	if s.time < now
-		spit "executing something"
+		spit "sched  EXEC - #{s.time} #{s.desc}"
 		process.next-tick -> schedule-run s
 		schedule-db.del id
 		exec-schedule!
 	else
-		spit "Scheduling into the future"
+		spit "sched  DEFER - #{s.time}"
 		schedule-timeout = set-timeout exec-schedule, (s.time - now + 100)
 
 process.on \SIGINT !->
