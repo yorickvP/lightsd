@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lightsd</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1>Available lights</h1>
+		</div>
+	{{#lights}}
+		<div class="row">
+			<div class="col-sm-3" style="margin-top: 7px;"><p>{{name}}</p></div>
+			<div class="btn-group col-sm-3">
+				<button type="button" class="btn btn-primary hook" data-href="on?light={{name}}">
+					<span class="glyphicon glyphicon-record"></span> On</button>
+				<button type="button" class="btn btn-default hook" data-href="off?light={{name}}">
+					<span class="glyphicon glyphicon-off"></span> Off</button>
+			</div>
+		</div>
+		{{#sched.length}}
+		<div class="row"><div class="col-sm-4">
+		<div class="panel panel-default">
+			<div class="panel-heading"><span class="glyphicon glyphicon-time"></span> Scheduled</div>
+			<ul class="list-group">
+					{{#sched}}
+				<li class="list-group-item">
+					<div class="list-group-item-heading">
+						<span class="glyphicon glyphicon-{{#state}}record{{/state}}{{^state}}off{{/state}}"></span> <b>{{desc}}</b>
+					</div>
+					<div class="list-group-item-text">
+						{{#state}}On{{/state}}{{^state}}Off{{/state}} {{moment}}
+					</div>
+				</li>
+					{{/sched}}
+			</ul>
+		</div></div></div>
+		{{/sched.length}}
+	{{/lights}}
+	</div>
+<script>
+function hookURL(elem) {
+	elem.addEventListener('click', function(e) {
+		console.log(elem.getAttribute('data-href'));
+		var oReq = new XMLHttpRequest();
+		oReq.open("get", elem.getAttribute('data-href'), true);
+		oReq.send();
+		e.preventDefault();
+	}, false);
+}
+[].forEach.call(document.getElementsByClassName('hook'), hookURL);
+</script>
+</body>
+</html>
+

@@ -7,6 +7,7 @@
 	// @add-schedule-light = add-schedule-light
 
 var airport = require('airport')
+var server = require('./lib/server')
 var air = airport('frumar.yori.cc', 9090)
 var lights = air.connect('lightsd@0.0.2')
 if (process.argv.length < 3) {
@@ -45,6 +46,9 @@ else {
 			case "del":
 				r.lights.delName(process.argv[3], process.exit)
 				break;
+			case "web":
+				server(r, +process.argv[3])
+				break
 			default:
 				process.stderr.write("Error: unknown command")
 				process.exit()
