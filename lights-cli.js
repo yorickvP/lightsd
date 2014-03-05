@@ -24,6 +24,14 @@ else {
 					process.exit()
 				})
 				break;
+			case "list-schedule":
+				r.schedule.list(function(l) {
+					Object.keys(l).forEach(function(k) {
+						process.stdout.write(l[k].desc + " " + "\n")
+					})
+					process.exit()
+				})
+				break;
 			case "on":
 			case "off":
 				if (process.argv.length == 4) {

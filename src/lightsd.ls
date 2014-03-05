@@ -3,6 +3,8 @@ require! MicroDB: \nodejs-microdb
 {spawn} = require \child_process
 settings = require \./config
 
+sun_sched = require \./sun_sched
+
 {version} = require "#__dirname/../package.json"
 
 # spit :: IO ()
@@ -88,10 +90,22 @@ add-schedule-light = (+time, name, state, desc = '') ->
 	schedule-db.add {time, name, state, desc}
 	spit "sched  ADD - #time #name #state #desc"
 	exec-schedule!
+# add-schedule-light :: Int -> String -> IO DBMod
+add-schedule-sched = (+time, desc = '') ->
+	schedule-db.add {time, schedule-date: time, desc}
+	spit "sched  ADD - #time sched #desc"
+	exec-schedule!
 
 schedule-run = (s) ->
 	if s.name?
 		turn-light s.name, s.state
+	else if s.schedule-date?
+		sun_sched.schedule-run do
+			add-light: add-schedule-light
+			add-sched: add-schedule-sched
+			list:      list-schedule
+			del:       del-schedule
+			, s
 	else
 		turn s.group, s.num, s.state	
 
@@ -132,3 +146,8 @@ process.on \SIGINT !->
 	process.exit!
 
 exec-schedule!
+sun_sched.schedule-future do
+	add-sched: add-schedule-sched
+	list:      list-schedule
+	del:       del-schedule
+
