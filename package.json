@@ -5,7 +5,10 @@
   "dependencies": {
     "airport": "~1.1.0",
     "nodejs-microdb": "~0.0.2",
-    "suncalc": "~1.2.2"
+    "suncalc": "~1.2.2",
+    "connect": "~2.13.0",
+    "moment": "~2.5.1",
+    "mu2": "~0.5.20"
   },
   "bin": {
     "lights": "./lights-cli.js",

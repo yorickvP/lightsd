@@ -6,12 +6,17 @@ This is a node.js thing to control the radio-controlled lights in your home ([kl
 What you need
 ----
 - A raspberry-pi or something else with a 434MHz transmitter
-- An executable that can be called like `./light A 1 on` (`kaku` from [lights.zip](https://www.dropbox.com/s/nxdrkuk94w9fpqo/lights.zip?dl=1))
+- An executable that can be called like `./light A 1 on` (ie `kaku` from [lights.zip](https://www.dropbox.com/s/nxdrkuk94w9fpqo/lights.zip?dl=1))
 - A [seaport](https://github.com/substack/seaport) server
 
 How to set it up
 ----
-On the Raspberry-PI:
+### On a server accessible from your R-Pi and clients:
+
+Set up a seaport server and make sure it has a static IP or DNS name pointing to it.
+
+### On the Raspberry-Pi:
+
 1. Install libwiringpi
 2. Compile the tool for your brand:
 
@@ -20,11 +25,7 @@ On the Raspberry-PI:
 3. Set a `setuid` bit on it if it needs to run as root
 4. Copy `config.default.json` to `config.json` and modify the host/port to point to your seaport server, and modify the controller to point to your executable
 
-On another/the same server:
-
-Run a seaport server.
-
-On your client:
+### On your client:
 
 Add a `config.json` pointing to your seaport server. Run the `lights` executable to interface with the server.
 
