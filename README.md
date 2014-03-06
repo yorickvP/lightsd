@@ -24,10 +24,11 @@ Set up a seaport server and make sure it has a static IP or DNS name pointing to
 
 3. Set a `setuid` bit on it if it needs to run as root
 4. Copy `config.default.json` to `config.json` and modify the host/port to point to your seaport server, and modify the controller to point to your executable
+5. Run `lightsd.js`
 
 ### On your client:
 
-Add a `config.json` pointing to your seaport server. Run the `lights` executable to interface with the server.
+Add a `config.json` pointing to your seaport server. You can place this in the same directory as the lightsd installation, or as `~/.config/lights.conf.json` Run the `lights`(or `lights-cli.js`) executable to interface with the server.
 
 Daily Scheduling
 ------

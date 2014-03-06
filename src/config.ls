@@ -1,13 +1,18 @@
 require! [\fs \path]
 relative-root = ->
-	path.join __dirname, "/../", it
+	path.resolve __dirname, "../", it
 read-JSON-sync = ->
 	try
 		JSON.parse fs.read-file-sync relative-root it
 	catch {code}:e
 		switch code
-		| "ENOENT"  => {}
+		| "ENOENT"  => null
 		| otherwise => throw e
+try-multiple = (files) ->
+	for file in files
+		c = read-JSON-sync file
+		return c if !!c
+	{}
 merge-defaults = (a, fallback) ->
 	if Array.isArray fallback
 		if a then that
@@ -17,7 +22,8 @@ merge-defaults = (a, fallback) ->
 	else if a? then a
 	else fallback
 get-config = ->
+	{HOME} = process.env
 	merge-defaults do
-		read-JSON-sync \config.json
+		try-multiple [ \config.json "#HOME/.config/lights.conf.json" ]
 		read-JSON-sync \config.default.json
 module.exports = get-config!
