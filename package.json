@@ -1,7 +1,7 @@
 {
   "name": "lightsd",
   "author": "Yorick van Pelt <yorickvanpelt@gmail.com> (http://yori.cc/)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lightsd.js",
   "dependencies": {
     "airport": "~1.1.0",

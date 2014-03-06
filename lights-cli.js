@@ -10,7 +10,7 @@ var airport = require('airport')
 var server = require('./lib/server')
 var config = require('./lib/config')
 var air = airport(config.host, config.port)
-var lights = air.connect('lightsd@0.1.0')
+var lights = air.connect('lightsd@0.1.1')
 if (process.argv.length < 3) {
 	console.log("no command given")
 }
