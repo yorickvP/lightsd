@@ -7,7 +7,7 @@ What you need
 ----
 - A raspberry-pi or something else with a 434MHz transmitter
 - An executable that can be called like `./light A 1 on` (ie `kaku` from [lights.zip](https://www.dropbox.com/s/nxdrkuk94w9fpqo/lights.zip?dl=1))
-- A [seaport](https://github.com/substack/seaport) server
+- A [seaport](https://github.com/substack/seaport)@1.7.0 server
 
 How to set it up
 ----

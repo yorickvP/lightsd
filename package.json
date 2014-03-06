@@ -1,6 +1,6 @@
 {
   "name": "lightsd",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "lightsd.js",
   "dependencies": {
     "airport": "~1.1.0",
