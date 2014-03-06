@@ -1,5 +1,6 @@
 {
   "name": "lightsd",
+  "author": "Yorick van Pelt <yorickvanpelt@gmail.com> (http://yori.cc/)"
   "version": "0.1.0",
   "main": "lightsd.js",
   "dependencies": {
@@ -17,5 +18,10 @@
   "scripts": {
   	"build": "lsc -oc lib/ src",
   	"watch": "lsc -ocw lib/ src"
-  }
+  },
+  "license": "ISC",
+  "repository": {
+      "type" : "git",
+      "url" : "https://github.com/yorickvP/lightsd.git"
+    }
 }
