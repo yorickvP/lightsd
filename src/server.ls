@@ -1,7 +1,7 @@
 require! [http,connect, path, fs, url, moment]
 require! {mu: 'mu2'}
 moment.lang \en-gb
-
+# schedule-add-light time, name, state, desc = ''
 
 relative = (p) ->
 	path.resolve __dirname, \../ p
@@ -13,6 +13,12 @@ plaintext = (data, res) -->
 		'Content-Length': data.length
 		'Content-Type': "text/plain; charset=UTF-8"
 	res.end data
+
+redirect = (url, res) -->
+	res.write-head 303 do
+		'Location': '/'
+	res.end!
+
 
 index-template = (remote, res) ->
 	lights <- remote.lights.list!
@@ -28,6 +34,15 @@ index-template = (remote, res) ->
 	mu.compile-and-render \index.tmpl {lights, sched} .pipe res
 pathname = (req-url) -> url.parse req-url .pathname
 
+schedule-add = (remote, {body}, res) ->
+	{\sched-add-state : state
+	\sched-add-time   : time
+	\sched-add-light  : light} = body
+	time = new Date time
+	<- remote.schedule.add-light +time, light, (state == 'on'), 'Added from web'
+	redirect \/ res
+
+
 module.exports = server = (remote, port) ->
 	turn = remote.lights.turn
 	okay = plaintext 'okay'
@@ -35,11 +50,14 @@ module.exports = server = (remote, port) ->
 		connect!
 		.use connect.logger \dev
 		.use connect.query!
-		.use ({query: {light}, url}, res, next) !->
+		.use connect.body-parser!
+		.use ({query: {light, id}, url}:req, res, next) !->
 			switch pathname url
 			| \/    => index-template remote, res
 			| \/on  => turn light, on  -> okay res
 			| \/off => turn light, off -> okay res
+			| \/sched-add => schedule-add remote, req, res
+			| \/sched-del => remote.schedule.del id, -> redirect \/ res
 			| _     => next!
 		.use connect.static relative \web
 		.use connect.error-handler!
