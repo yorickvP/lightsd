@@ -1,5 +1,10 @@
 require! [suncalc]
-times-for-day = require \../sun_sched.js
+times-for-day =
+	try        require \../sun_sched.js
+	catch e => switch e.code
+	| \MODULE_NOT_FOUND => -> []
+	| otherwise         => throw e
+
 add-sched = ({add-light}, schedules) ->
 	schedules.for-each ([name, state, desc, time]) ->
 		add-light +time, name, state, desc

@@ -33,4 +33,4 @@ Add a `config.json` pointing to your seaport server. You can place this in the s
 Daily Scheduling
 ------
 
-You can modify the `sun_sched.js` file, the code will be run daily to set times that lights turn on and off. (please keep in mind that the descriptions need to be reasonably unique (everything with the same description is erased when these times are set)).
+You can copy the `sun_sched.example.js` file to `sun_sched.js`, the code will be run daily to set times that lights turn on and off. (please keep in mind that the descriptions need to be reasonably unique (everything with the same description is erased when these times are set)).

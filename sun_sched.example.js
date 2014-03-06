@@ -15,14 +15,21 @@ function endTime(d) {
 function dateRepr(d) {
 	return [d.getFullYear(), d.getMonth(), d.getDate()].join("-") }
 
+// export a function that is run daily
+// use sunTimes to calculate when the sun
+// comes up/down on a lat/long.
+// return: [lightname, state, desc, time]
 
+// keep in mind that these descriptions should not clash with any
+// other ones you're using, because every schedule item with the same
+// ones will be removed.
 function timesForDay(day, sunTimes) {
 	var sun = sunTimes(52.22, 5.15)
 	var repr = dateRepr(day)
 	var start = startTime(day, sun)
 	var end = endTime(day, sun)
 	return [
-		['schoorsteen', true, "sunset " + repr, start],
-		['schoorsteen', false, "night " + repr, end]]}
+		/*['your_light', true, "sunset " + repr, start],
+		  ['your_light', false, "night " + repr, end] */]}
 
 module.exports = timesForDay
